@@ -20,11 +20,13 @@ characterAmount_dict = {
 }
 
 # functions
-def AssignCharactersForPlayerAmount():
+def AssignCharactersForPlayerAmount(integer):
     return true
 # end of functions
 
 print("How many players? (min 5, max 15)")
 playerAmount = int(input())
+
+AssignCharactersForPlayerAmount(playerAmount)
 
 # random sampling without replacement random.sample(population, k, *, counts=None)
