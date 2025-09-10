@@ -41,5 +41,16 @@ demonsAmount = characterDistribution_array[3]
 # random sampling without replacement random.sample(population, k, *, counts=None)
 # 1 solution
 townsfolkCharacters = ChooseCharacters(characterAlignment_dict["Townsfolk"], townsfolkAmount)
-print(townsfolkCharacters)
+outsidersCharacter = ChooseCharacters(characterAlignment_dict["Outsiders"], outsidersAmount)
+minionsCharacter = ChooseCharacters(characterAlignment_dict["Minions"], minionsAmount)
+demonsCharacter = ChooseCharacters(characterAlignment_dict["Demons"], demonsAmount)
+
+charactersInPlay.append(townsfolkCharacters)
+charactersInPlay.append(outsidersCharacter)
+charactersInPlay.append(minionsCharacter)
+charactersInPlay.append(demonsCharacter)
+
+print(charactersInPlay)
 # 2 solution with 1 function going through two lists: alignments and characters with amount
+foreach number in characterDistribution_array:
+        
