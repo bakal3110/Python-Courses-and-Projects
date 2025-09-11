@@ -7,6 +7,8 @@ characterAlignment_dict = {
     "Demons" : ["Imp"]
 }
 
+characterAlignment_array = ["Townsfolk", "Outsiders", "Minions", "Demons"]
+
 characterAmount_dict = {
     5 : [3,0,1,1],
     6 : [3,1,1,1],
@@ -22,35 +24,24 @@ characterAmount_dict = {
 }
 
 charactersInPlay = []
+chosenCharacters = []
+
+alignment_index = 0
 
 # functions
-def ChooseCharacters(characters, amount):
-    chosenCharacters = random.sample(population=characters, k=amount)
-    return chosenCharacters
 # end of functions
 
+# program
 print("How many players? (min 5, max 15)")
 playerAmount = int(input())
 
-characterDistribution_array = characterAmount_dict[playerAmount]
-townsfolkAmount = characterDistribution_array[0]
-outsidersAmount = characterDistribution_array[1]
-minionsAmount = characterDistribution_array[2]
-demonsAmount = characterDistribution_array[3]
-
-# random sampling without replacement random.sample(population, k, *, counts=None)
-# 1 solution
-townsfolkCharacters = ChooseCharacters(characterAlignment_dict["Townsfolk"], townsfolkAmount)
-outsidersCharacter = ChooseCharacters(characterAlignment_dict["Outsiders"], outsidersAmount)
-minionsCharacter = ChooseCharacters(characterAlignment_dict["Minions"], minionsAmount)
-demonsCharacter = ChooseCharacters(characterAlignment_dict["Demons"], demonsAmount)
-
-charactersInPlay.append(townsfolkCharacters)
-charactersInPlay.append(outsidersCharacter)
-charactersInPlay.append(minionsCharacter)
-charactersInPlay.append(demonsCharacter)
-
+for number_of_characters in characterDistribution_array:
+    if number_of_characters == 0: alignment_index += 1
+    else:
+        current_alignment = characterAlignment_array[alignment_index]
+        chosenCharacters = random.sample(population=characterAlignment_dict[current_alignment], k=number_of_characters)
+        for character in chosenCharacters:
+            charactersInPlay.append(character)
+        alignment_index += 1
 print(charactersInPlay)
-# 2 solution with 1 function going through two lists: alignments and characters with amount
-foreach number in characterDistribution_array:
-        
+# end of program
