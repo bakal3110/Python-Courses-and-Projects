@@ -35,7 +35,7 @@ alignment_index = 0
 print("How many players? (min 5, max 15)")
 playerAmount = int(input())
 
-for number_of_characters in characterDistribution_array:
+for number_of_characters in characterAmount_dict[playerAmount]:
     if number_of_characters == 0: alignment_index += 1
     else:
         current_alignment = characterAlignment_array[alignment_index]
@@ -43,5 +43,4 @@ for number_of_characters in characterDistribution_array:
         for character in chosenCharacters:
             charactersInPlay.append(character)
         alignment_index += 1
-print(charactersInPlay)
 # end of program
