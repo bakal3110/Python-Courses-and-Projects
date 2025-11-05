@@ -25,6 +25,10 @@ characterAmount_dict = {
 
 # Functions
 def getCharacters(player_amount: int):
+    '''
+    Returns a list of randomly chosen characters in play. List values are lists of alignment's characters - [ Townsfolk, Outsiders, Minions, Demons ]
+    Input: player amount as int
+    '''
     # go through all alignments
     # pick random characters for each alignment in play
     characters = []
@@ -42,3 +46,4 @@ print(getCharacters(player_amount))
 # distribute characters at random for each player
 
 # End of program
+
