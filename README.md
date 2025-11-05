@@ -6,3 +6,7 @@ Repository where I will save my Python learning progress by following different 
 - [Scientific Computing with Python](https://www.freecodecamp.org/learn/scientific-computing-with-python/das) `in-queue`
  
 ## Projects / Challenges
+- Blood on The Clocktower Storyteller AI
+- Volleyball Stats Tracker
+- Gantt Chart
+- Password Locker
