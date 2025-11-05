@@ -3,6 +3,8 @@ tableData = [['apples', 'oranges', 'cherries', 'banana'],
              ['dogs', 'cats', 'moose', 'goose']]
 
 def printTable():
+    '''prints columns of tableData with dynamic justifying
+    '''
     index = 0
     colWidths = [0] * len(tableData)
     for list in tableData:
