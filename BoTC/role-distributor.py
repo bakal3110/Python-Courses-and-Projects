@@ -23,24 +23,22 @@ characterAmount_dict = {
     15 : [9,2,3,1]
 }
 
-charactersInPlay = []
-chosenCharacters = []
+# Functions
+def getCharacters(player_amount: int):
+    # go through all alignments
+    # pick random characters for each alignment in play
+    characters = []
+    for i in range(4):
+        characters.append(random.sample(characterAlignment_dict[characterAlignment_array[i]], characterAmount_dict[player_amount][i]))
+    return characters
 
-alignment_index = 0
+# End of functions
 
-# functions
-# end of functions
+# Program
 
-# program
-print("How many players? (min 5, max 15)")
-playerAmount = int(input())
+# get amount of players
+player_amount = int(input("How many players? (5 - 15): "))
+print(getCharacters(player_amount))
+# distribute characters at random for each player
 
-for number_of_characters in characterAmount_dict[playerAmount]:
-    if number_of_characters == 0: alignment_index += 1
-    else:
-        current_alignment = characterAlignment_array[alignment_index]
-        chosenCharacters = random.sample(population=characterAlignment_dict[current_alignment], k=number_of_characters)
-        for character in chosenCharacters:
-            charactersInPlay.append(character)
-        alignment_index += 1
-# end of program
+# End of program
