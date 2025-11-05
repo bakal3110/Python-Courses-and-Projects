@@ -42,8 +42,13 @@ def getCharacters(player_amount: int):
 
 # get amount of players
 player_amount = int(input("How many players? (5 - 15): "))
-print(getCharacters(player_amount))
+characters_in_play = getCharacters(player_amount)
+
+# get bluffs
+    # get list of characters not in play, only townsfolk and outsiders
+
 # distribute characters at random for each player
 
 # End of program
+
 
