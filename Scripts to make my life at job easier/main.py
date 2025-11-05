@@ -32,7 +32,6 @@ def capture_screenshot(filename='screenshot.png', region=None):
     try:
         screenshot = pyautogui.screenshot(region=region) if region else pyautogui.screenshot()
         screenshot.save(filename)
-        #print("Zrzut ekranu zapisany jako", filename)
         return filename
     except Exception as e:
         print("Error while taking a screenshot:", e)
