@@ -20,3 +20,13 @@ def printTable():
         print(line)
 
 printTable()
+
+# better, optimized version
+def printTable2():
+    colWidths = [max(len(item) for item in column) for column in tableData]
+
+    for i in range(len(tableData[0])):
+        line = "".join(tableData[j][i].rjust(colWidths[j] + 1) for j in range(len(tableData)))
+        print(line)
+        
+printTable2()
