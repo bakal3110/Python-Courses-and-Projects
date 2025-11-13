@@ -12,3 +12,4 @@ Repository where I will save my Python learning progress by following different 
 - Password Locker
 - Table Printer
 - Scripts to make my life at job easier
+
