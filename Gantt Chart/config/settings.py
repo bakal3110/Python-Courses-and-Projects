@@ -1,8 +1,7 @@
 # data 
 DATE_FORMAT = '%Y-%m-%d'
-
 # chart 
-TITLE = "Super Cool Project"
+TITLE = "Gantt Chart"
 TITLE_SIZE = 12
 TITLE_FONT_WEIGHT = "bold"
 
@@ -18,7 +17,7 @@ MONTH_FONT_WEIGHT = "bold"
 
 BAR_COLOR = "#30C7DC"
 TEAM_BAR_COLORS = {
-    "Technology": "#56778f",
+    "Technology": "#2e5d7e",
     "Business": "#91be6f",
     "Finance": "#ff6e61",
     "Marketing": "#f9c54e"

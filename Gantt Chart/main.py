@@ -8,7 +8,7 @@ def main():
     # Excel file specs
     sheet_name = 'data'
     header = 0
-    nrows = 52
+    nrows = 13
     skiprows = None 
 
     tasks = load_tasks(file_path, sheet_name, header, nrows, skiprows)
