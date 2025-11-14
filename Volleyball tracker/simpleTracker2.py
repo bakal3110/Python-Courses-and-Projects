@@ -21,6 +21,9 @@ def start_match():
     team1_points = 0
     team2_points = 0
 
+    team1_sets = 0
+    team2_sets = 0
+
     clear_screen()
     print("=== START NEW MATCH ===")
 
@@ -28,7 +31,10 @@ def start_match():
     team2_name = input("Name of second team: ")
 
     #display points , sets with team names
-
+    clear_screen()
+    print(f'Current set: {team1_sets + team2_sets}')
+    print(f'{team1_name} {team1_points}\t{team1_sets}:{team2_sets]\t{team2_points} {team2_name}')
+    
 
     input("\nPress ENTER to return to menu...")
 
