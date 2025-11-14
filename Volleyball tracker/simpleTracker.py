@@ -5,27 +5,42 @@
 # - Player
 # - Set
 
-import os
+import os, sys
 from pynput import keyboard
 import pyfiglet
 from time import sleep
 from termcolor import colored
 
-clear_screen = lambda: os.system('cls')
-def on_key_release(key):
-    match key:
-        case keyboard.Key.esc:
-            # Stop listener
-            return False
-        case keyboard.Key.('1'):
-            start_match()
+team1 = ['1a', '2a', '3a', '4a', '5a', '6a']
+team2 = ['1b', '2b', '3b', '4b', '5b', '6b']
+field = []
+
+
+def main():
+    with keyboard.Listener(on_release=on_release) as listener:
+        while True:
+            clear_screen()
+            display_menu()
+            listener.join()
+
+def clear_screen():
+    os.system('cls')
+
+def on_release(key):
+    if key == keyboard.Key.esc:
+        print("Zamykanie programu...")
+        sys.exit()
+        return False  # To zatrzyma listener i pozwoli wyjść z programu
+    elif hasattr(key, 'char') and key.char == '1':
+        start_match()
+    return True
 
     
 
 # Start listening in a separate thread
-listener = keyboard.Listener(on_release=on_key_release)
-# listener.start() to start listening
-# listener.join() to start listening and stop until listener executes
+#listener = keyboard.Listener(on_release=on_key_release)
+#listener.start() #to start listening
+# listener.join() to stop program execution until listener executes
 
 def display_menu():
     #fonts = ['banner3-D', 'kban', 'larry3d', 'nancyj-fancy', 'r2-d2___', 'roman', 'slant', 'smslant', 'speed', 'standard', 'trek', '3-d', 'basic', 'chunky', 'epic', 'fender']
@@ -48,14 +63,11 @@ def display_menu():
     print()
 
 def start_match():
-    while True:
+    #while True:
         clear_screen()
         print("=== START NEW MATCH ===")
         print("Match setup would go here...")
-        user_input = input("\nPress ENTER to return to menu...")
-        match user_input:
-            case _:
-                return False
+        print("\nPress ENTER to return to menu...")
 
 def view_stats():
     clear_screen()
@@ -69,11 +81,16 @@ def manage_players():
     print("Player management interface...")
     input("\nPress ENTER to return to menu...")
 
-def main():
-    while True:
-        clear_screen()
-        display_menu()
-        listener.start()
-        listener.join()
+def update_field(team1, team2):
+
+    return [
+        [team1[4], team1[3], team2[1], team2[0]],
+        [team1[5], team1[2], team2[2], team2[5]],
+        [team1[0], team1[1], team2[3], team2[4]],
+    ]
+
+def rotation(team):
+    popped_player = team.pop(0)
+    team.append(popped_player)
 
 main()
