@@ -36,6 +36,26 @@ def getCharacters(player_amount: int):
         characters.append(random.sample(characterAlignment_dict[characterAlignment_array[i]], characterAmount_dict[player_amount][i]))
     return characters
 
+def getBluffs(characters_in_play):
+    '''
+    Returns a list of three characters not in play. Only from Townsfolk and Outsiders.
+    Input: list of characters in play
+    '''
+    characters_not_in_play = []
+    for i in range(2):
+        for character in characterAlignment_dict[characterAlignment_array[i]]:
+            if character not in characters_in_play[i]:
+                characters_not_in_play.append(character)
+    bluffs = random.sample(characters_not_in_play, 3)
+    return bluffs
+
+def distributeRoles(characters_in_play):
+    '''
+    Distributes characters randomly
+    Input: list of characters in play
+    '''
+    return True
+
 # End of functions
 
 # Program
@@ -43,11 +63,14 @@ def getCharacters(player_amount: int):
 # get amount of players
 player_amount = int(input("How many players? (5 - 15): "))
 characters_in_play = getCharacters(player_amount)
+print(characters_in_play)
 
 # get bluffs
     # get list of characters not in play, only townsfolk and outsiders
+bluffs = getBluffs(characters_in_play)
 
 # distribute characters at random for each player
+distributeRoles(characters_in_play)
 
 # End of program
 
