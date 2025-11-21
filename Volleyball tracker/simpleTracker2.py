@@ -1,5 +1,16 @@
 import os, pyfiglet
+import pathlib # for handling directories
 from termcolor import colored
+
+# check if himmelev.json and directories exists, create them if not
+dirExists = os.path.exists(os.path.join(os.getcwd(), 'clubs', 'himmelev.json'))
+if not dirExists:
+    os.makedirs(os.path.dirname('clubs/himmelev.json'), exist_ok=True)
+
+# check if players.json and directories exists, create them if not
+dirExists = os.path.exists(os.path.join(os.getcwd(), 'players', 'players.json'))
+if not dirExists:
+    os.makedirs(os.path.dirname('players/players.json'), exist_ok=True)
 
 team1 = ['1a', '2a', '3a', '4a', '5a', '6a']
 team2 = ['1b', '2b', '3b', '4b', '5b', '6b']
@@ -25,6 +36,23 @@ class Player:
     # role/position
     # lifelong stats (accumulates after each game)
     # current game stats (reset with new game)
+    __init__(self, name, club, number, position):
+        self.name = name
+        self.club = club
+        self.number = number
+        self.position = position
+    
+    def getName(self):
+        return self.name
+    
+    def getClub(self):
+        return self.club
+
+    def getNumber(self):
+        return self.number
+    
+    def getPosition(self):
+        return self.position
 
 def main():
     while True:
