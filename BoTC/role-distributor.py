@@ -23,6 +23,48 @@ characterAmount_dict = {
     15 : [9,2,3,1]
 }
 
+# Classes
+class Player:
+    '''
+    Player class, responsible for handling all data regarding player.
+    '''
+    character = 'N/A'
+    alignment = 'N/A'
+    team = 'N/A'
+
+    def __init__(self, name):
+        self.name = name
+        self.character = character
+        self.alignment = alignment
+        self.team = team
+
+    def assignCharacter(self, character)
+        self.character = character
+        alignment = next((k for k, values in characterAlignment_dict.items() if character in values), None)
+        self.alignment = alignment
+    
+    def assignTeam(self, team)
+        self.team = team
+    
+    def getCharacter(self)
+        return self.character
+
+    def getAlignment(self)
+        return self.alignment
+    
+    def getTeam(self)
+        return self.team
+
+class Game:
+    '''
+    Game class, responsible for handling players, game events and game progress.
+    '''
+    def __init__(self, player_amount):
+        self.player_amount = player_amount
+
+    def updateStats(self, stats) # To be done
+        self.stats = stats
+
 # Functions
 def getCharacters(player_amount: int):
     '''
@@ -52,9 +94,11 @@ def getBluffs(characters_in_play):
 def distributeRoles(characters_in_play):
     '''
     Distributes characters randomly
+    Returns a list of characters, sorted randomly.
     Input: list of characters in play
     '''
-    return True
+
+    return 
 
 # End of functions
 
