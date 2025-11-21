@@ -5,6 +5,27 @@ team1 = ['1a', '2a', '3a', '4a', '5a', '6a']
 team2 = ['1b', '2b', '3b', '4b', '5b', '6b']
 field = []
 
+class Game:
+    # game has max 5 sets
+    # game includes two teams playing
+    # each set is played until 25 poitns are scored or more, with 2 points difference between teams
+    # game ends in BO5 fashion
+
+    # insert functions and vars below
+class Club:
+    # players
+    # games played
+    # games won
+    # games lost
+
+class Player:
+    # name
+    # club
+    # number
+    # role/position
+    # lifelong stats (accumulates after each game)
+    # current game stats (reset with new game)
+
 def main():
     while True:
         display_menu()
