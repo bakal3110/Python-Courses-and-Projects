@@ -1,8 +1,9 @@
 import os, pyfiglet
+import json
 import pathlib # for handling directories
 from termcolor import colored
 
-# check if himmelev.json and directories exists, create them if not
+'''# check if himmelev.json and directories exists, create them if not
 dirExists = os.path.exists(os.path.join(os.getcwd(), 'clubs', 'himmelev.json'))
 if not dirExists:
     os.makedirs(os.path.dirname('clubs/himmelev.json'), exist_ok=True)
@@ -11,93 +12,500 @@ if not dirExists:
 dirExists = os.path.exists(os.path.join(os.getcwd(), 'players', 'players.json'))
 if not dirExists:
     os.makedirs(os.path.dirname('players/players.json'), exist_ok=True)
+'''
+team1_players = ['1a', '2a', '3a', '4a', '5a', '6a']
+team2_players = ['1b', '2b', '3b', '4b', '5b', '6b']
 
-team1 = ['1a', '2a', '3a', '4a', '5a', '6a']
-team2 = ['1b', '2b', '3b', '4b', '5b', '6b']
-field = []
 
-class Game:
+index_serves = 0
+index_serves_failed = 1
+index_serves_aces = 2
+index_receives = 3
+index_receives_failed = 4
+index_sets = 5
+index_sets_failed = 6
+index_attacks = 7
+index_attacks_kills = 8
+index_attacks_failed = 9
+index_blocks = 10
+index_blocks_failed = 11
+index_blocks_kills = 12
+
+class Game: # data
+    # keeps sets, teams
     # game has max 5 sets
     # game includes two teams playing
     # each set is played until 25 poitns are scored or more, with 2 points difference between teams
     # game ends in BO5 fashion
 
-    # insert functions and vars below
-class Club:
+    MAX_SETS = 5
+
+    def __init__(self, team1, team2):
+        self.sets = []
+        self.current_set = -1
+        self.teams = [team1, team2]
+        self.teams_order = [team1, team2]
+        self.sets_team1 = 0
+        self.sets_team2 = 0
+    
+    def startNewSet(self):
+        self.current_set += 1
+        set = Set(self.current_set)
+        self.sets.append(set)
+
+    def playSet(self, team_with_ball, set):
+        print("Set has started. Confirm every prompt by inputing number and pressing ENTER.\n")
+        while not set.isFinished(Stats(), set):
+            pointScored = False # reset point scoring check
+            self.displayScore()
+            # serve -> [receive -> set -> attack] <- LOOP
+            # serve
+            print(f"{team_with_ball.name} serves.") # get player name TO DO
+            print('\t1. Success\n\t2. Fail\n\t3. Ace')
+            while True:
+                uinput = input("Outcome: ")
+                match uinput:
+                    case '1': # success
+                        event = Event(team_with_ball, 'serve')
+                        Stats().evaluateEvent(event, self, set)
+                        team_with_ball = Stats().ballOver(self, team_with_ball)
+                        break
+                    case '2': # fail
+                        event = Event(team_with_ball, 'serve_fail')
+                        Stats().evaluateEvent(event, self, set)
+                        team_with_ball = Stats().ballOver(self, team_with_ball)
+                        Stats().updateScore(event, self, set)
+                        pointScored = True
+                        break
+                    case '3': # ace
+                        event = Event(team_with_ball, 'ace')
+                        Stats().evaluateEvent(event, self, set)
+                        Stats().updateScore(event, self, set)
+                        pointScored = True
+                        break
+                    case '_':
+                        pass 
+            while not pointScored:
+                # receive
+                print(f"\n\t{team_with_ball.name} receives\n\t\t1.Success\n\t\t2. Fail")
+                while True:
+                    uinput = input('\tOutcome: ')
+                    match uinput:
+                        case '1': # success
+                            event = Event(team_with_ball, 'receive')
+                            Stats().evaluateEvent(event, self, set)
+                            break
+                        case '2': # fail
+                            event = Event(team_with_ball, 'receive_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        # add case '3': # freeball, where ball goes over
+                        case '_':
+                            pass
+                if pointScored: break            
+                # set
+                print(f"\n\t\t{team_with_ball.name} sets:\n\t\t\t1.Success\n\t\t\t2. Fail")
+                while True:
+                    uinput = input('\t\tOutcome: ')
+                    match uinput:
+                        case '1': # success
+                            event = Event(team_with_ball, 'set')
+                            Stats().evaluateEvent(event, self, set)
+                            break
+                        case '2': # fail
+                            event = Event(team_with_ball, 'set_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '_':
+                            pass
+
+                if pointScored: break
+                # attack
+                print(f"\n\t\t\t{team_with_ball.name} attacks:\n\t\t\t\t1.Success\n\t\t\t\t2. Fail\n\t\t\t\t3. Kill")
+                while True:
+                    uinput = input('\t\t\tOutcome: ')
+                    match uinput:
+                        case '1': # success
+                            event = Event(team_with_ball, 'attack')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '2': # fail
+                            event = Event(team_with_ball, 'attack_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '3': # kill
+                            event = Event(team_with_ball, 'attack_kills')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '_':
+                            pass
+
+        # assign +1 set to winning team
+        # determine who won maybe?
+        winning_team = Stats().getSetWinningTeam(self, set)
+        if self.teams[0].name == winning_team.name:
+            self.sets_team1 += 1
+            set.setWinner(self.teams[0].name)
+        else:
+            self.sets_team2 += 1
+            set.setWinner(self.teams[1].name)
+
+
+    def displayScore(self):
+        current_set = self.sets[self.current_set]
+        print(f'\t\t\tCurrent set: {self.current_set+1}')
+        print(f'\t\t\t{self.teams[0].name} {self.sets_team1}\t{current_set.score_team1}:{current_set.score_team2}\t{self.sets_team2} {self.teams[1].name}') # change formatting
+        print("\n\n")
+
+    def getCurrentSet(self):
+        return self.sets[self.current_set]
+    
+    def getTeamName(self, team):
+        return team.name
+    
+    def isOver(self):
+        # check if the game just started
+        if len(self.sets) == 0: return False
+        # check if either team has 3 won sets
+        winners = []
+        for set in self.sets:
+            winners.append(set.getWinner())
+        for i in range(0,2):
+            set_count = winners.count(self.teams[i].name)
+            if set_count == 3:
+                self.setWinner(self.teams[i])
+                return True
+        return False
+    
+    def changeServeStartingTeam(self, previous_team):
+        if previous_team.name == self.teams[0].name: team = self.teams[1]
+        else: team = self.teams[0]    
+        return team
+    
+    def setWinner(self, winner): # sets string name of winner team
+        self.winner = winner.name
+
+    def getWinner(self): # returns string name of winner team
+        return self.winner
+
+class Set: # data
+    # points, rotations, substitutions, scoring history, and events
+    def __init__(self, current_set):
+        self.set_number = current_set+1
+        self.score_team1 = 0
+        self.score_team2 = 0
+        self.statistics_team1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.statistics_team2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.events = []
+        self.winner = "NA"
+
+    def recordEvent(self, event):
+        self.events.append(event)
+
+    def isFinished(self, stats, set):
+        return stats.isSetFinished(set)
+       
+    def setWinner(self, winner_team): # sets string name of winner team
+        self.winner = winner_team
+    
+    def getWinner(self): # returns string name of winner team
+        return self.winner
+
+class Team:
     # players
-    # games played
-    # games won
-    # games lost
+    # team level stats in object TeamStats
+    def __init__(self, name, players):
+        self.name = name
+        self.players = players
 
 class Player:
     # name
-    # club
+    # Team
     # number
     # role/position
-    # lifelong stats (accumulates after each game)
-    # current game stats (reset with new game)
-    __init__(self, name, club, number, position):
+    # has PlayerStats object
+    def __init__(self, name, team, number, position):
         self.name = name
-        self.club = club
+        self.team = team
         self.number = number
         self.position = position
     
     def getName(self):
         return self.name
     
-    def getClub(self):
-        return self.club
+    def getTeam(self):
+        return self.team
 
     def getNumber(self):
         return self.number
     
     def getPosition(self):
         return self.position
+    
+    # Convert Player object to dictionary for JSON serialization
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'team': self.team,
+            'number': self.number,
+            'position': self.position
+        }
+    
+    # Create Player object from dictionary
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            name=data['name'],
+            team=data['team'],
+            number=data['number'],
+            position=data['position']
+        )
+    
+class PlayerStats:
+    # holds all player-level metrics: attacks, kills, attack errors, receptions, digs, blocks, serves, service errors, etc.
+    def __init__(self):
+        pass
 
-def main():
-    while True:
-        display_menu()
-        uinput = input("Choose option ('e' to exit): ")
-        if uinput == 'e':
-            break
+class TeamStats:
+    # games played
+    # games won
+    # games lost
+    def __init__(self):
+        pass
+
+class Stats: # calculations
+    # engine for processing and calculating stats from events
+    # assign outcomes to PlayerStats and ClubStats
+    def __init__(self):
+        pass
+    
+    def evaluateEvent(self, event, game, set):
+        if game.teams[0].name == event.team.name:
+            statistics = set.statistics_team1
         else:
-            menu_choice(uinput)
+            statistics = set.statistics_team2
+
+        match event.action_type:
+            # Serves
+            case 'serve':
+                set.recordEvent(event)
+                statistics[index_serves] += 1
+            case 'serve_fail':
+                set.recordEvent(event)
+                statistics[index_serves] += 1
+                statistics[index_serves_failed] += 1
+            case 'ace':
+                set.recordEvent(event)
+                statistics[index_serves] += 1
+                statistics[index_serves_aces] += 1
+
+            # Receives
+            case 'receive':
+                set.recordEvent(event)
+                statistics[index_receives] += 1
+            case 'receive_fail':
+                set.recordEvent(event)
+                statistics[index_receives] += 1
+                statistics[index_receives_failed] += 1
+
+            # Sets
+            case 'set':
+                set.recordEvent(event)
+                statistics[index_sets] += 1
+            case 'set_fail':
+                set.recordEvent(event)
+                statistics[index_sets] += 1
+                statistics[index_sets_failed] += 1
+
+            # Attacks
+            case 'attack':
+                set.recordEvent(event)
+                statistics[index_attacks] += 1
+            case 'attack_kill':
+                set.recordEvent(event)
+                statistics[index_attacks_kills] += 1
+            case 'attack_fail':
+                set.recordEvent(event)
+                statistics[index_attacks] += 1
+                statistics[index_attacks_failed] += 1
+
+            # Blocks
+            case 'block':
+                set.recordEvent(event)
+                statistics[index_blocks] += 1
+            case 'block_fail':
+                set.recordEvent(event)
+                statistics[index_blocks] += 1
+                statistics[index_blocks_failed] += 1
+            case 'block_kill':
+                set.recordEvent(event)
+                statistics[index_blocks_kills] += 1
+
+            case _:
+                print("Unknown event happened.")
+
+    def updateScore(self, event, game, set):
+        # im getting event data from OLD OBJECT YOU DUMMY
+        # I need to update score based on succes/fail
+
+        fails = ['serve_fail', 'receive_fail', 'set_fail', 'attack_fail', 'block_fail']
+
+        if event.action_type in fails: # for fails, award the other team
+            if game.teams[0].name == event.team.name:
+                set.score_team2 += 1
+                #statistics = set.statistics_team2
+            else:
+                set.score_team1 += 1
+                #statistics = set.statistics_team1 
+        else:
+            if game.teams[0].name == event.team.name:
+                set.score_team1 += 1
+                #statistics = set.statistics_team1
+            else:
+                set.score_team2 += 1
+                #statistics = set.statistics_team2
+
+    def isSetFinished(self, set):
+        if (set.score_team1 >= 3) or (set.score_team2 >= 3):
+            if ((set.score_team1 - set.score_team2) >= 2) or ((set.score_team1 - set.score_team2) <= -2):
+                return True
+        return False
+    
+    def getSetWinningTeam(self, game, set):
+        if (set.score_team1 - set.score_team2) >= 2:
+            return game.teams[0]
+        else: return game.teams[1]
+    
+    def startingTeam(self, game):
+        print(f'Who serves first?\n1. {game.teams[0].name}\n2. {game.teams[1].name}')
+        uinput = input("Choose team: ")
+        while True:
+            match uinput:
+                case '1':
+                    team_name = game.teams[0]
+                    break
+                case '2':
+                    team_name = game.teams[1]
+                    break
+                case _:
+                    pass     
+        return team_name
+        
+    def chooseSides(self, game):
+        print(f'Who is on left side?\n1. {game.teams[0].name}\n2. {game.teams[1].name}')
+        while True:
+            uinput = input('Choose team: ')
+            if uinput == '1':
+                game.teams_order = [game.teams[0], game.teams[1]]
+                return game.teams_order
+            elif uinput == '2':
+                game.teams_order = [game.teams[1], game.teams[0]]
+                return game.teams_order
+            else: pass
+
+
+    def ballOver(self, game, current_team): # return team that currently has ball in-play
+        if current_team.name == game.teams[0].name: team_with_ball = game.teams[1]
+        else: team_with_ball = game.teams[0]
+        return team_with_ball
+
+class Event: # data
+    # all kinds of events/actions during the game
+    # add event logger? 
+    action_types = [ # update this based on Stats().evaluateEvent()
+        'serve',
+        'ace',
+        'receive',
+        'set',
+        'attack',
+        #'tip',
+        'block',
+        'out'
+    ]
+
+    def __init__(self, team, action_type):
+        self.team = team
+        self.action_type = action_type   
 
 def clear_screen():
     os.system('cls')
 
 def start_match():
-    team1_points = 0
-    team2_points = 0
-
-    team1_sets = 0
-    team2_sets = 0
-
     clear_screen()
     print("=== START NEW MATCH ===")
 
+    # Create team objects and assign players
     team1_name = input("Name of first team: ")
     team2_name = input("Name of second team: ")
+    print()
 
-    #display points , sets with team names
-    clear_screen()
-    print(f'Current set: {team1_sets + team2_sets}')
-    print(f'{team1_name} {team1_points}\t{team1_sets}:{team2_sets]\t{team2_points} {team2_name}')
+    team1 = Team(team1_name, team1_players)
+    team2 = Team(team2_name, team2_players)
+
+    # Initialize stats object
+    stats = Stats()
+
+    # Create game object
+    game = Game(team1, team2)
+
+    # Decide which team starts serving
+    serve_starting_team = stats.startingTeam(game)
+    print()
     
+    # check if game is done with isGameOver()
+    while not game.isOver():
+        game.startNewSet()
+        current_set = game.getCurrentSet()
+        if game.current_set > 0: serve_starting_team = game.changeServeStartingTeam(serve_starting_team)
 
-    input("\nPress ENTER to return to menu...")
+        # Change on which side a team is playing - qol for user, not relevant for stats
+        teams_order = stats.chooseSides(game)
+
+        clear_screen()
+        game.playSet(serve_starting_team, current_set)
+        game.displayScore()
+        input(f'{current_set.getWinner()} won the set! Press ENTER to continue...')
+    
+    input(f"\n{game.getWinner()} won! Press ENTER to return to menu...")
 
 def view_stats():
     clear_screen()
     print("=== VIEW STATISTICS ===")
-    print("Statistics would be displayed here...")
+    print()
     input("\nPress ENTER to return to menu...")
 
 def manage_players():
     clear_screen()
     print("=== PLAYER MANAGEMENT ===")
-    print("Player management interface...")
-    input("\nPress ENTER to return to menu...")
+    print("1. Add player")
+    print("2. Remove player")
+    print("3. Show all players")
+    uinput = input("\nChoose option ('e' to exit): ")
+    match uinput:
+        case '1':
+            pass
+        case '2':
+            pass
+        case '3':
+            pass
+        case 'e':
+            pass
+        case _:
+            clear_screen()
+            input('Invalid input! Press ENTER to try again...')
+            manage_players()
 
 def update_field(team1, team2):
 
@@ -138,5 +546,14 @@ def menu_choice(uinput):
         case _:
             clear_screen()
             input('Invalid input! Press ENTER to try again...')
+
+def main():
+    while True:
+        display_menu()
+        uinput = input("Choose option ('e' to exit): ")
+        if uinput == 'e':
+            break
+        else:
+            menu_choice(uinput)
 
 main()
