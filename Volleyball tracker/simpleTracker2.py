@@ -1,5 +1,6 @@
 import os, pyfiglet
 import json
+from datetime import datetime
 import pathlib # for handling directories
 from termcolor import colored
 
@@ -439,6 +440,62 @@ class Event: # data
         self.team = team
         self.action_type = action_type   
 
+def save_game_to_file(game, filename='games.json'):
+    """
+    Save a Game object to JSON file
+    """
+    try:
+        # Check if file exists and load existing games
+        games_data = []
+        if os.path.exists(filename):
+            with open(filename, 'r') as file:
+                games_data = json.load(file)
+        
+        # Convert Game object to dictionary
+        game_data = {
+            'timestamp': datetime.now().isoformat(),
+            'teams': [game.teams[0].name, game.teams[1].name],
+            'winner': game.getWinner() if hasattr(game, 'winner') else "Not finished",
+            'sets_team1': game.sets_team1,
+            'sets_team2': game.sets_team2,
+            'sets': []
+        }
+        
+        # Add set data
+        for set_obj in game.sets:
+            set_data = {
+                'set_number': set_obj.set_number,
+                'score_team1': set_obj.score_team1,
+                'score_team2': set_obj.score_team2,
+                'winner': set_obj.getWinner(),
+                'statistics_team1': set_obj.statistics_team1,
+                'statistics_team2': set_obj.statistics_team2
+            }
+            game_data['sets'].append(set_data)
+        
+        # Add to existing games and save
+        games_data.append(game_data)
+        
+        with open(filename, 'w') as file:
+            json.dump(games_data, file, indent=2)
+        
+        print(f"Game saved to {filename}")
+    except Exception as e:
+        print(f"Error saving game: {e}")
+
+def load_games_from_file(filename='games.json'):
+    """
+    Load games from JSON file
+    """
+    try:
+        if os.path.exists(filename):
+            with open(filename, 'r') as file:
+                return json.load(file)
+        return []
+    except Exception as e:
+        print(f"Error loading games: {e}")
+        return []
+
 def clear_screen():
     os.system('cls')
 
@@ -480,11 +537,61 @@ def start_match():
     
     input(f"\n{game.getWinner()} won! Press ENTER to return to menu...")
 
+    # Save the game data after match is complete
+    save_game_to_file(game)
+
 def view_stats():
     clear_screen()
     print("=== VIEW STATISTICS ===")
-    print()
+
+     # Load all games
+    games = load_games_from_file()
+    
+    if not games:
+        print("No game data found. Play some matches first!")
+        input("\nPress ENTER to return to menu...")
+        return
+    
+    while True:
+        print("\n1. View All Games Summary")
+        print("2. View Detailed Game Statistics - TO DO")
+        print("3. View Team Statistics - TO DO")
+        print("4. Back to Main Menu")
+        
+        choice = input("\nChoose option: ")
+        
+        if choice == '1':
+            view_all_games_summary(games)
+        elif choice == '2':
+            pass
+            #view_detailed_game_stats(games)
+        elif choice == '3':
+            pass
+            #view_team_statistics(games)
+        elif choice == '4':
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
     input("\nPress ENTER to return to menu...")
+
+def view_all_games_summary(games):
+    clear_screen()
+    print("=== ALL GAMES SUMMARY ===")
+    print()
+    
+    for i, game in enumerate(games, 1):
+        print(f"Game {i}:")
+        print(f"  Teams: {game['teams'][0]} vs {game['teams'][1]}")
+        print(f"  Winner: {game['winner']}")
+        print(f"  Final Score: {game['sets_team1']}-{game['sets_team2']}")
+        print(f"  Date: {game['timestamp'][:10]}")
+        print(f"  Sets:")
+        for set_data in game['sets']:
+            print(f"    Set {set_data['set_number']}: {set_data['score_team1']}-{set_data['score_team2']} (Winner: {set_data['winner']})")
+        print("-" * 50)
+    
+    input("\nPress ENTER to continue...")
 
 def manage_players():
     clear_screen()
