@@ -1,19 +1,24 @@
 What can it do:
 - display main menu
 - go through main menu options
+- start and go through a whole game
+- assign basic stats to each team
+- save game result in json file
+- load saved games from json file
+- display statistics for each game and each team in that game
 
 What I want it to be able to do:
 - display lineup
 - display teams on correct halves of the field
-- end the set automatically when one team scores >= 25 points while having having 2 point advantage over opposite team; add +1 set to winning team
 - perform rotations
 - substitutions
 - display proper field
-- display points
-- display team names
-- display sets
 - increment points & sets by one using a button
 - display a box in the center that is supposed to be playing field
+- ~~end the set automatically when one team scores >= 25 points while having having 2 point advantage over opposite team; add +1 set to winning team~~
+- ~~display points~~
+- ~~display team names~~
+- ~~display sets~~
 
 Current vision:
 
@@ -22,3 +27,9 @@ Current vision:
 Current status (I think im scrapping that, its super confusing for me right now. I'll create terminal-usable version first):
 
 <img width="1705" height="804" alt="{808E320B-44A2-4A37-AF68-B6E4755FA89A}" src="https://github.com/user-attachments/assets/fce6835f-bf56-4790-85aa-87b7b62f3643" />
+
+@Update 24/11/25
+I have scrapped previous project and remodeled it using OOP. Works how I want it to work.
+Things to do:
+- fix 5th set to finish after 15 points scored
+- calculate and display stats after each set

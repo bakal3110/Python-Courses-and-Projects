@@ -17,7 +17,6 @@ if not dirExists:
 team1_players = ['1a', '2a', '3a', '4a', '5a', '6a']
 team2_players = ['1b', '2b', '3b', '4b', '5b', '6b']
 
-
 index_serves = 0
 index_serves_failed = 1
 index_serves_aces = 2
@@ -31,6 +30,9 @@ index_attacks_failed = 9
 index_blocks = 10
 index_blocks_failed = 11
 index_blocks_kills = 12
+
+SET_POINTS = 25
+LAST_SET_POINTS = 15
 
 class Game: # data
     # keeps sets, teams
@@ -379,10 +381,16 @@ class Stats: # calculations
                 #statistics = set.statistics_team2
 
     def isSetFinished(self, set):
-        if (set.score_team1 >= 3) or (set.score_team2 >= 3):
-            if ((set.score_team1 - set.score_team2) >= 2) or ((set.score_team1 - set.score_team2) <= -2):
-                return True
-        return False
+        if set.set_number == 5:
+            if (set.score_team1 >= LAST_SET_POINTS) or (set.score_team2 >= LAST_SET_POINTS):
+                if ((set.score_team1 - set.score_team2) >= 2) or ((set.score_team1 - set.score_team2) <= -2):
+                    return True
+            return False 
+        else: 
+            if (set.score_team1 >= SET_POINTS) or (set.score_team2 >= SET_POINTS):
+                if ((set.score_team1 - set.score_team2) >= 2) or ((set.score_team1 - set.score_team2) <= -2):
+                    return True
+            return False
     
     def getSetWinningTeam(self, game, set):
         if (set.score_team1 - set.score_team2) >= 2:
