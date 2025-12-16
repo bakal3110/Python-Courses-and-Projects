@@ -647,7 +647,12 @@ class Stats: # calculations
         team1_events = []
         team2_events = []
 
-        for event in event_list:
+        for event in reversed(event_list):
+            # now I need to remove all events from set.events log
+            for i in range(len(set.events) - 1, -1, -1):
+                if set.events[i] == event:
+                    del set.events[i]
+                    break
             if event.team.name == game.teams[0].name:
                 team1_events.append(event)
             else:
@@ -732,7 +737,6 @@ class Stats: # calculations
                         case "freeball_kill":
                             statistics[index_freeballs] -= 1
                             statistics[index_freeballs_kills] -= 1
-        
 
 class Event: # data
     # all kinds of events/actions during the game
