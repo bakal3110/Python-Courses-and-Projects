@@ -914,7 +914,107 @@ def view_all_games_summary(games_file):
         print(f"  Sets:")
         for set_data in game['sets']:
             print(f"    Set {set_data['set_number']}: {set_data['score_team1']}-{set_data['score_team2']} (Winner: {set_data['winner']})")
-        print("-" * 50)
+            
+            for team in game['teams']:
+                # figure out later how to do it with zip(), for now let it work
+                serve_total = set_data['statistics_team1'][index_serves]
+                serve_fails = set_data['statistics_team1'][index_serves_failed]
+                serve_aces = set_data['statistics_team1'][index_serves_aces]
+                receive_total = set_data['statistics_team1'][index_receives]
+                receive_fails = set_data['statistics_team1'][index_receives_failed]
+                receive_success = receive_total-receive_fails
+                set_total = set_data['statistics_team1'][index_sets]
+                set_fails = set_data['statistics_team1'][index_sets_failed]
+                set_successes = set_total-set_fails
+                attack_total = set_data['statistics_team1'][index_attacks]
+                attack_kills = set_data['statistics_team1'][index_attacks_kills]
+                attack_fails = set_data['statistics_team1'][index_attacks_failed]
+                block_total = set_data['statistics_team1'][index_blocks]
+                block_us = set_data['statistics_team1'][index_blocks_we_have_ball]
+                block_them = set_data['statistics_team1'][index_block_opponent_has_ball]
+                block_fails = set_data['statistics_team1'][index_blocks_failed]
+                block_kills = set_data['statistics_team1'][index_blocks_kills]
+                tip_total = set_data['statistics_team1'][index_tips]
+                tip_fails = set_data['statistics_team1'][index_tips_failed]
+                tip_kills = set_data['statistics_team1'][index_tips_kills]
+                freeball_total = set_data['statistics_team1'][index_freeballs]
+                freeball_fails = set_data['statistics_team1'][index_freeballs_fails]
+                freeball_kills = set_data['statistics_team1'][index_freeballs_kills]
+
+                serve_fails_p = serve_fails/serve_total
+                serve_aces_p = serve_aces/serve_total
+
+                print(f'Detailed Data for team {team}:')
+                print('Serves:')
+                print(f'\tTotal: {serve_total}')
+                print(f'\tFailed: {serve_fails}, which is {serve_fails_p:.0%} total')
+                print(f'\tAces: {serve_aces}, which is {serve_aces_p:.0%} total')
+
+                receive_fails_p = receive_fails/receive_total
+                receive_success_p = receive_success/receive_total
+
+                print('Receives:')
+                print(f'\tTotal: {receive_total}')
+                print(f'\tFailed: {receive_fails}, which is {:.0%} total')
+                print(f'\tSuccessful: {receive_success}, which is {:.0%} total')
+
+                set_fails_p = set_fails/set_total
+                set_successes_p = set_successes/set_total
+
+                print('Sets:')
+                print(f'\tTotal: {set_total}')
+                print(f'\tFailed: {set_fails}, which is {:.0%} total')
+                print(f'\tSuccessful: {set_successes}, which is {:.0%} total')
+
+                attack_fails_p = attack_fails/attack_total
+                attack_kills_p = attack_kills/attack_total
+            
+                print('Attacks:')
+                print(f'\tTotal: {attack_total}')'
+                print(f'\tFailed: {attack_fails}, which is {:.0%} total')
+                print(f'\tKills: {attack_kills}, which is {:.0%} total')
+
+                tip_fails_p = tip_fails/tip_total
+                tip_kills_p = tip_kills/tip_total
+
+                print('Tips:')
+                print(f'\tTotal: {tip_total}')
+                print(f'\tFailed: {tip_fails}, which is {:.0%} total')
+                print(f'\tKills: {tip_kills}, which is {:.0%} total')
+
+                block_fails_p = block_fails/block_total
+                block_kills_p = block_kills/block_total
+                block_us_p = block_us/block_total
+                block_them_p = block_them/block_total
+
+                print('Blocks:')
+                print(f'\tTotal: {block_total}')
+                print(f'\tFailed: {block_fails}, which is {:.0%} total')
+                print(f'\tKills: {block_kills}, which is {:.0%} total')
+                print(f'\tTouches, we got ball: {block_us}, which is {:.0%} total')
+                print(f'\tTouches, they got ball: {block_them}, which is {:.0%} total')
+
+                freeball_fails_p = freeball_fails/freeball_total
+                freeball_kills_p = freeball_kills/freeball_total
+
+                print('Freeballs:')
+                print(f'\tTotal: {freeball_total}')
+                print(f'\tFailed: {freeball_fails}, which is {:.0%} total')
+                print(f'\tKills: {freeball_kills}, which is {:.0%} total')
+
+                print("-" * 50)
+
+                all_attacks = attack_total+tip_total+freeball_total
+
+                print('Attack Summary (Attacks, tips, freeballs combined)')
+                prtint(f"Total: {all_attacks}")
+                print(f'Spike Kills: {attack_kills/all_attacks:.0%}')
+                print(f'Tip Kills: {tip_kills/all_attacks:.0%}')
+                print(f'Block Kills: {block_kills/all_attacks:.0%}')
+                print(f'Freeball Kills: {freeball_kills/all_attacks:.0%}')
+                print(f'Aces: {serve_aces/all_attacks:.0%}')
+                # print(f'Opponent couldn\'t receive: {attack_kills/all_attacks:.0%}')
+
     
     input("\nPress ENTER to continue...")
 
