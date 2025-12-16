@@ -54,15 +54,18 @@ class Game: # data
         set = Set(self.current_set)
         self.sets.append(set)
     
-    # 
 
     def playSet(self, team_with_ball, set):
         print("Set has started. Confirm every prompt by inputing number and pressing ENTER.\n")
+        event_list = []
         while not set.isFinished(Stats(), set):
             pointScored = False # reset point scoring check
+            pointIsCanceled = False
+            event_list.clear() # reset event list every new point
+            event = None
             self.displayScore()
-        # serve -> [receive -> set -> attack] <- LOOP
-        # serve
+            # serve -> [receive -> set -> attack] <- LOOP
+            # serve
             print(f"{team_with_ball.name} serves.") # get player name TO DO
             print('\t1. Success\n\t2. Fail\n\t3. Ace')
             while True:
@@ -86,10 +89,16 @@ class Game: # data
                         Stats().updateScore(event, self, set)
                         pointScored = True
                         break
-                    case '_':
-                        pass 
+                    case 'x': # cancel point
+                        pointIsCanceled = True
+                        revertPoint(self, set, event_list)
+                        break
+                    case _:
+                        pass
+            if pointIsCanceled: break
+            if event is not None:
+                event_list.append(event) 
             while not pointScored:
-
                 # receive
                 print(f"\n\t{team_with_ball.name} receives\n\t\t1.Success\n\t\t2. Fail")
                 while True:
@@ -124,8 +133,14 @@ class Game: # data
                             Stats().updateScore(event, self, set)
                             pointScored = True
                             break
-                        case '_':
+                        case 'x': # cancel point
+                            pointIsCanceled = True
+                            revertPoint(self, set, event_list)
+                            break
+                        case _:
                             pass
+                if pointIsCanceled: break
+                event_list.append(event)
                 if pointScored: break
 
                 # set
@@ -180,9 +195,15 @@ class Game: # data
                             Stats().updateScore(event, self, set)
                             pointScored = True
                             break
-                        case '_':
+                        case 'x': # cancel point
+                            pointIsCanceled = True
+                            revertPoint(self, set, event_list)
+                            break
+                        case _:
                             pass
 
+                if pointIsCanceled: break
+                event_list.append(event)
                 if pointScored: break
 
                 # attack
@@ -244,9 +265,16 @@ class Game: # data
                             Stats().updateScore(event, self, set)
                             pointScored = True
                             break
-                        case '_':
+                        case 'x': # cancel point
+                            pointIsCanceled = True
+                            revertPoint(self, set, event_list)
+                            break
+                        case _:
                             pass
                 
+                if pointIsCanceled: break
+                event_list.append(event)
+
                 # block
                 print(f"\n\t\t\t{team_with_ball.name} blocks?\n\t\t\t\tEnter. No block\n1.Monster block\n\t\t\t\t2. Fail\n\t\t\t\t3. Touch, ball ours\n\t\t\t\t4. Blok, opponent has ball")
                 while True:
@@ -276,8 +304,15 @@ class Game: # data
                             Stats().evaluateEvent(event, self, set)
                             team_with_ball = Stats().ballOver(self, team_with_ball)
                             break
-                        case '_':
+                        case 'x': # cancel point
+                            pointIsCanceled = True
+                            revertPoint(self, set, event_list)
+                            break
+                        case _:
                             pass
+                
+                if pointIsCanceled: break
+                event_list.append(event)
 
         # assign +1 set to winning team
         # determine who won maybe?
@@ -333,8 +368,8 @@ class Set: # data
         self.set_number = current_set+1
         self.score_team1 = 0
         self.score_team2 = 0
-        self.statistics_team1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.statistics_team2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.statistics_team1 = [0 for x in range(21)]
+        self.statistics_team2 = [0 for x in range(21)]
         self.events = []
         self.winner = "NA"
 
@@ -585,6 +620,119 @@ class Stats: # calculations
         if current_team.name == game.teams[0].name: team_with_ball = game.teams[1]
         else: team_with_ball = game.teams[0]
         return team_with_ball
+
+    def revertPoint(self, game, set, event_list): # go back 1 point and remove all events from that point
+        # event list has all events that we need to revert
+        # Im getting set.statistics_team1 or 2 objects with different indexes
+
+
+        # check if there is anything to revert
+        if not event_list: return
+
+        '''
+        example:
+
+        I got one event - serve success, meaning that:
+            event_list = [Event(team_with_ball, 'serve')], which is
+            event_list = [
+                [index.team = team_with_ball, index.action_type = 'serve']
+            ]
+
+        So I have two values - team name and what happened
+        To revert the event I need to locate which team is team_with_ball.
+        I will group events by team name:
+        '''
+
+        # group events by team
+        team1_events = []
+        team2_events = []
+
+        for event in event_list:
+            if event.team.name == game.teams[0].name:
+                team1_events.append(event)
+            else:
+                team2_events.append(event)
+
+        '''
+        Then going through each team events, I will find corresponding event.action_type and substract 1 from it
+        '''
+        team_event_list = [team1_events, team2_events]
+        for team_events in team_event_list:
+            if not team_events: pass
+            else:
+                if team_events[0].team.name == game.teams[0].name:
+                    statistics = set.statistics_team1
+                else:
+                    statistics = set.statistics_team2
+                for event in team_events:
+                    match event.action_type:
+                        # Serves
+                        case 'serve':
+                            statistics[index_serves] -= 1
+                        case 'serve_fail':
+                            statistics[index_serves] -= 1
+                            statistics[index_serves_failed] -= 1
+                        case 'ace':
+                            statistics[index_serves] -= 1
+                            statistics[index_serves_aces] -= 1
+
+                        # Receives
+                        case 'receive':
+                            statistics[index_receives] -= 1
+                        case 'receive_fail':
+                            statistics[index_receives] -= 1
+                            statistics[index_receives_failed] -= 1
+
+                        # Sets
+                        case 'set':
+                            statistics[index_sets] -= 1
+                        case 'set_fail':
+                            statistics[index_sets] -= 1
+                            statistics[index_sets_failed] -= 1
+
+                        # Attacks
+                        case 'attack':
+                            statistics[index_attacks] -= 1
+                        case 'attack_kill':
+                            statistics[index_attacks_kills] -= 1
+                        case 'attack_fail':
+                            statistics[index_attacks] -= 1
+                            statistics[index_attacks_failed] -= 1
+
+                        # Blocks
+                        case 'block_we_have_ball':
+                            statistics[index_blocks] -= 1
+                            statistics[index_blocks_we_have_ball] -= 1
+                        case 'block_opponent_has_ball':
+                            statistics[index_blocks] -= 1
+                            statistics[index_block_opponent_has_ball] -= 1
+                        case 'block_fail':
+                            statistics[index_blocks] -= 1
+                            statistics[index_blocks_failed] -= 1
+                        case 'block_kill':
+                            statistics[index_blocks] -= 1
+                            statistics[index_blocks_kills] -= 1
+
+                        # Tips
+                        case 'tip':
+                            statistics[index_tips] -= 1
+                        case 'tip_fail':
+                            statistics[index_tips] -= 1
+                            statistics[index_tips_failed] -= 1
+                        case 'tip_kill':
+                            statistics[index_tips] -= 1
+                            statistics[index_tips_kills] -= 1
+
+                        # Freeballs
+                        case "freeball":
+                            statistics[index_freeballs] -= 1
+                        case "freeball_fail":
+                            statistics[index_freeballs] -= 1
+                            statistics[index_freeballs_fails] -= 1
+                        case "freeball_kill":
+                            statistics[index_freeballs] -= 1
+                            statistics[index_freeballs_kills] -= 1
+        
 
 class Event: # data
     # all kinds of events/actions during the game
