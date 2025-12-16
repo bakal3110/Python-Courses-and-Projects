@@ -53,6 +53,8 @@ class Game: # data
         self.current_set += 1
         set = Set(self.current_set)
         self.sets.append(set)
+    
+    # 
 
     def playSet(self, team_with_ball, set):
         print("Set has started. Confirm every prompt by inputing number and pressing ENTER.\n")
@@ -87,7 +89,7 @@ class Game: # data
                     case '_':
                         pass 
             while not pointScored:
-                
+
                 # receive
                 print(f"\n\t{team_with_ball.name} receives\n\t\t1.Success\n\t\t2. Fail")
                 while True:
@@ -104,7 +106,24 @@ class Game: # data
                             Stats().updateScore(event, self, set)
                             pointScored = True
                             break
-                        # add case '3': # freeball, where ball goes over
+                        case '4': # freeball, where ball goes over
+                            event = Event(team_with_ball, 'freeball')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '5': # freeball fail
+                            event = Event(team_with_ball, 'freeball_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '6': # freeball point (sometimes happens)
+                            event = Event(team_with_ball, 'freeball_kill')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
                         case '_':
                             pass
                 if pointScored: break
@@ -122,6 +141,42 @@ class Game: # data
                             event = Event(team_with_ball, 'set_fail')
                             Stats().evaluateEvent(event, self, set)
                             team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '4': # freeball, where ball goes over
+                            event = Event(team_with_ball, 'freeball')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '5': # freeball fail
+                            event = Event(team_with_ball, 'freeball_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '6': # freeball point (sometimes happens)
+                            event = Event(team_with_ball, 'freeball_kill')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '7': # tip
+                            event = Event(team_with_ball, 'tip')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '8': # tip fail
+                            event = Event(team_with_ball, 'tip_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '9': # tip point
+                            event = Event(team_with_ball, 'tip_kill')
+                            Stats().evaluateEvent(event, self, set)
                             Stats().updateScore(event, self, set)
                             pointScored = True
                             break
@@ -152,6 +207,74 @@ class Game: # data
                             Stats().evaluateEvent(event, self, set)
                             Stats().updateScore(event, self, set)
                             pointScored = True
+                            break
+                        case '4': # freeball, where ball goes over
+                            event = Event(team_with_ball, 'freeball')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '5': # freeball fail
+                            event = Event(team_with_ball, 'freeball_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '6': # freeball point (sometimes happens)
+                            event = Event(team_with_ball, 'freeball_kill')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '7': # tip
+                            event = Event(team_with_ball, 'tip')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            break
+                        case '8': # tip fail
+                            event = Event(team_with_ball, 'tip_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '9': # tip point
+                            event = Event(team_with_ball, 'tip_kill')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '_':
+                            pass
+                
+                # block
+                print(f"\n\t\t\t{team_with_ball.name} blocks?\n\t\t\t\tEnter. No block\n1.Monster block\n\t\t\t\t2. Fail\n\t\t\t\t3. Touch, ball ours\n\t\t\t\t4. Blok, opponent has ball")
+                while True:
+                    uinput = input('\t\t\tOutcome: ')
+                    match uinput:
+                        case '': # no block
+                            break
+                        case '1': # monster block
+                            event = Event(team_with_ball, 'block_kill')
+                            Stats().evaluateEvent(event, self, set)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '2': # fail
+                            event = Event(team_with_ball, 'block_fail')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
+                            Stats().updateScore(event, self, set)
+                            pointScored = True
+                            break
+                        case '3': # touch, ball ours
+                            event = Event(team_with_ball, 'block_we_have_ball')
+                            Stats().evaluateEvent(event, self, set)
+                            break
+                        case '4': # touch, opponent has ball
+                            event = Event(team_with_ball, 'block_opponent_has_ball')
+                            Stats().evaluateEvent(event, self, set)
+                            team_with_ball = Stats().ballOver(self, team_with_ball)
                             break
                         case '_':
                             pass
