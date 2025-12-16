@@ -25,6 +25,9 @@ index_blocks_kills = 14
 index_tips = 15
 index_tips_failed = 16
 index_tips_kills = 17
+index_freeballs = 18
+index_freeballs_fails = 19
+index_freeballs_kills = 20
 
 SET_POINTS = 25
 LAST_SET_POINTS = 15
@@ -56,8 +59,8 @@ class Game: # data
         while not set.isFinished(Stats(), set):
             pointScored = False # reset point scoring check
             self.displayScore()
-            # serve -> [receive -> set -> attack] <- LOOP
-            # serve
+        # serve -> [receive -> set -> attack] <- LOOP
+        # serve
             print(f"{team_with_ball.name} serves.") # get player name TO DO
             print('\t1. Success\n\t2. Fail\n\t3. Ace')
             while True:
@@ -84,6 +87,7 @@ class Game: # data
                     case '_':
                         pass 
             while not pointScored:
+                
                 # receive
                 print(f"\n\t{team_with_ball.name} receives\n\t\t1.Success\n\t\t2. Fail")
                 while True:
@@ -103,7 +107,8 @@ class Game: # data
                         # add case '3': # freeball, where ball goes over
                         case '_':
                             pass
-                if pointScored: break            
+                if pointScored: break
+
                 # set
                 print(f"\n\t\t{team_with_ball.name} sets:\n\t\t\t1.Success\n\t\t\t2. Fail")
                 while True:
@@ -124,6 +129,7 @@ class Game: # data
                             pass
 
                 if pointScored: break
+
                 # attack
                 print(f"\n\t\t\t{team_with_ball.name} attacks:\n\t\t\t\t1.Success\n\t\t\t\t2. Fail\n\t\t\t\t3. Kill")
                 while True:
@@ -142,7 +148,7 @@ class Game: # data
                             pointScored = True
                             break
                         case '3': # kill
-                            event = Event(team_with_ball, 'attack_kills')
+                            event = Event(team_with_ball, 'attack_kill')
                             Stats().evaluateEvent(event, self, set)
                             Stats().updateScore(event, self, set)
                             pointScored = True
@@ -369,6 +375,19 @@ class Stats: # calculations
                 set.recordEvent(event)
                 statistics[index_tips] += 1
                 statistics[index_tips_kills] += 1
+
+            # Freeballs
+            case "freeball":
+                set.recordEvent(event)
+                statistics[index_freeballs] += 1
+            case "freeball_fail":
+                set.recordEvent(event)
+                statistics[index_freeballs] += 1
+                statistics[index_freeballs_fails] += 1
+            case "freeball_kill":
+                set.recordEvent(event)
+                statistics[index_freeballs] += 1
+                statistics[index_freeballs_kills] += 1
 
             case _:
                 print("Unknown event happened.")
