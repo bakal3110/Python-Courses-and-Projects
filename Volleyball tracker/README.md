@@ -1,5 +1,5 @@
 What can it do:
-- display main menu
+- display text main menu
 - go through main menu options
 - start and go through a whole game
 - assign basic stats to each team
@@ -33,3 +33,15 @@ I have scrapped previous project and remodeled it using OOP. Works how I want it
 Things to do:
 - fix 5th set to finish after 15 points scored
 - calculate and display stats after each set
+
+@Update 16/12/25
+Things done:
+- fix 5th set to finish after 15 points scored
+
+Things to do:
+- calculate and display stats after each set
+- display detailed stats post-game
+- add freeballs during rally
+- add blocks
+- fix spike kill feature (doesnt add stats, because there is no code for that)
+- better stats handling (game indexing, remove games history through menu, plot charts)
