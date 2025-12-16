@@ -4,16 +4,6 @@ from datetime import datetime
 import pathlib # for handling directories
 from termcolor import colored
 
-'''# check if himmelev.json and directories exists, create them if not
-dirExists = os.path.exists(os.path.join(os.getcwd(), 'clubs', 'himmelev.json'))
-if not dirExists:
-    os.makedirs(os.path.dirname('clubs/himmelev.json'), exist_ok=True)
-
-# check if players.json and directories exists, create them if not
-dirExists = os.path.exists(os.path.join(os.getcwd(), 'players', 'players.json'))
-if not dirExists:
-    os.makedirs(os.path.dirname('players/players.json'), exist_ok=True)
-'''
 team1_players = ['1a', '2a', '3a', '4a', '5a', '6a']
 team2_players = ['1b', '2b', '3b', '4b', '5b', '6b']
 
@@ -28,8 +18,13 @@ index_attacks = 7
 index_attacks_kills = 8
 index_attacks_failed = 9
 index_blocks = 10
-index_blocks_failed = 11
-index_blocks_kills = 12
+index_blocks_we_have_ball = 11
+index_block_opponent_has_ball = 12
+index_blocks_failed = 13
+index_blocks_kills = 14
+index_tips = 15
+index_tips_failed = 16
+index_tips_kills = 17
 
 SET_POINTS = 25
 LAST_SET_POINTS = 15
@@ -345,16 +340,35 @@ class Stats: # calculations
                 statistics[index_attacks_failed] += 1
 
             # Blocks
-            case 'block':
+            case 'block_we_have_ball':
                 set.recordEvent(event)
                 statistics[index_blocks] += 1
+                statistics[index_blocks_we_have_ball] += 1
+            case 'block_opponent_has_ball':
+                set.recordEvent(event)
+                statistics[index_blocks] += 1
+                statistics[index_block_opponent_has_ball] += 1
             case 'block_fail':
                 set.recordEvent(event)
                 statistics[index_blocks] += 1
                 statistics[index_blocks_failed] += 1
             case 'block_kill':
                 set.recordEvent(event)
+                statistics[index_blocks] += 1
                 statistics[index_blocks_kills] += 1
+
+            # Tips
+            case 'tip':
+                set.recordEvent(event)
+                statistics[index_tips] += 1
+            case 'tip_fail':
+                set.recordEvent(event)
+                statistics[index_tips] += 1
+                statistics[index_tips_failed] += 1
+            case 'tip_kill':
+                set.recordEvent(event)
+                statistics[index_tips] += 1
+                statistics[index_tips_kills] += 1
 
             case _:
                 print("Unknown event happened.")
@@ -435,13 +449,22 @@ class Event: # data
     # add event logger? 
     action_types = [ # update this based on Stats().evaluateEvent()
         'serve',
+        'serve_fail',
         'ace',
         'receive',
+        'receive_fail',
         'set',
+        'set_fail'
         'attack',
-        #'tip',
-        'block',
-        'out'
+        'attack_kill',
+        'attack_fail',
+        'block_we_have_ball',
+        'block_opponent_has_ball'
+        'block_fail',
+        'block_kill',
+        'tip'
+        'tip_fail',
+        'tip_kill'
     ]
 
     def __init__(self, team, action_type):
@@ -583,12 +606,12 @@ def view_stats():
 
     input("\nPress ENTER to return to menu...")
 
-def view_all_games_summary(games):
+def view_all_games_summary(games_file):
     clear_screen()
     print("=== ALL GAMES SUMMARY ===")
     print()
     
-    for i, game in enumerate(games, 1):
+    for i, game in enumerate(games_file, 1):
         print(f"Game {i}:")
         print(f"  Teams: {game['teams'][0]} vs {game['teams'][1]}")
         print(f"  Winner: {game['winner']}")
@@ -621,18 +644,6 @@ def manage_players():
             clear_screen()
             input('Invalid input! Press ENTER to try again...')
             manage_players()
-
-def update_field(team1, team2):
-
-    return [
-        [team1[4], team1[3], team2[1], team2[0]],
-        [team1[5], team1[2], team2[2], team2[5]],
-        [team1[0], team1[1], team2[3], team2[4]],
-    ]
-
-def rotation(team):
-    popped_player = team.pop(0)
-    team.append(popped_player)
 
 def display_menu():
     ascii_art = pyfiglet.figlet_format("Volleyball Tracker", font='fender', width = 133, justify = 'center')
