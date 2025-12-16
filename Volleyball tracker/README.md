@@ -43,5 +43,16 @@ Things to do:
 - display detailed stats post-game
 - add freeballs during rally
 - add blocks
-- fix spike kill feature (doesnt add stats, because there is no code for that)
+- fix spike kill feature (doesnt add stats, because there is ~~no code for that~~ a typo...)
+- better stats handling (game indexing, remove games history through menu, plot charts)
+
+@Update 16/12/25
+Things done:
+- add freeballs during rally
+- add blocks
+- fix spike kill feature (doesnt add stats, because there is ~~no code for that~~ a typo...)
+
+Things to do:
+- calculate and display stats after each set
+- display detailed stats post-game
 - better stats handling (game indexing, remove games history through menu, plot charts)
