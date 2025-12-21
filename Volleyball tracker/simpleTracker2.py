@@ -970,7 +970,7 @@ def view_all_games_summary(games_file):
             serve_fails_p = serve_fails/serve_total
             serve_aces_p = serve_aces/serve_total
 
-            print(f'Detailed Data for team {team}:')
+            print(f'Detailed Data for team {game['team_names'][0]}:')
             print('Serves:')
             print(f'\tTotal: {serve_total}')
             print(f'\tFailed: {serve_fails}, which is {serve_fails_p:.0%} total')
