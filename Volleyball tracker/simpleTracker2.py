@@ -456,8 +456,15 @@ def save_game_to_file(game, filename='games.json'):
         # Check if file exists and load existing games
         games_data = []
         if os.path.exists(filename):
-            with open(filename, 'r') as file:
-                games_data = json.load(file)
+            try:
+                with open(filename, 'r') as file:
+                    content = file.read().strip()
+                    if content:  # Only load if file is not empty
+                        games_data = json.loads(content)
+            except (json.JSONDecodeError, ValueError):
+                # File exists but is empty or has invalid JSON
+                print(f"Note: {filename} was empty or corrupted, starting fresh.")
+                games_data = []
         
         # Convert Game object to dictionary
         game_data = {
@@ -498,7 +505,12 @@ def load_games_from_file(filename='games.json'):
     try:
         if os.path.exists(filename):
             with open(filename, 'r') as file:
-                return json.load(file)
+                content = file.read().strip()
+                if content:  # Check if file is not empty
+                    return json.loads(content)
+        return []  # Return empty list if file doesn't exist or is empty
+    except json.JSONDecodeError:
+        print(f"Warning: {filename} contains invalid JSON. Returning empty list.")
         return []
     except Exception as e:
         print(f"Error loading games: {e}")
