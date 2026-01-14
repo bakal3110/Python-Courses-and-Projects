@@ -24,9 +24,9 @@ Current vision:
 
 <img width="869" height="554" alt="{4889C13D-9770-4E48-8787-D993CF5E6EFA}" src="https://github.com/user-attachments/assets/a1c57dcd-aef9-4df9-9090-f201fdc09078" />
 
-Current status (I think im scrapping that, its super confusing for me right now. I'll create terminal-usable version first):
+Current status (updated as of 14/01/26):
 
-<img width="1705" height="804" alt="{808E320B-44A2-4A37-AF68-B6E4755FA89A}" src="https://github.com/user-attachments/assets/fce6835f-bf56-4790-85aa-87b7b62f3643" />
+<img width="1275" height="824" alt="image" src="https://github.com/user-attachments/assets/8a5bd271-8b1b-4423-ac0e-9803d50edd1b" />
 
 @Update 24/11/25
 I have scrapped previous project and remodeled it using OOP. Works how I want it to work.
@@ -37,6 +37,9 @@ Things to do:
 @Update 16/12/25
 Things done:
 - fix 5th set to finish after 15 points scored
+
+@Update 14/01/26
+I started creating GUI using PyQt5. For now it displays a picture, three clickable buttons that change color of the window below them.
 
 Things to do:
 - calculate and display stats after each set
